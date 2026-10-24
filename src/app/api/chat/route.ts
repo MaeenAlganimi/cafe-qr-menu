@@ -1,0 +1,11 @@
+import { GoogleGenAI, Type } from '@google/genai';
+import { menu } from '@/data/cafe';
+export async function POST(request:Request){
+ try {
+ const body=await request.json(); const message=String(body.message||'').slice(0,1000); const ar=body.language==='ar';
+ if(!message.trim())return Response.json({error:'Please enter a question.'},{status:400});
+ const mock=()=>{const cheap=/cheap|budget|afford|رخيص|اقتصاد/i.test(message); const vegan=/vegan|plant|نباتي/i.test(message);const popular=/popular|best|شائع|مشهور|شهرة/i.test(message);const picks=cheap?[...menu].sort((a,b)=>a.price-b.price).slice(0,2):vegan?menu.filter(i=>i.tags.includes('Vegan')).slice(0,2):popular?menu.filter(i=>i.tags.includes('Popular')):menu.slice(0,2);return {reply:ar?'إليك اقتراحات من قائمتنا. الأسعار بالدولار. أخبر فريق المقهى بأي حساسية قبل الطلب.':'Here are a couple of picks from our menu'+(cheap?' that keep things budget-friendly':vegan?' made with plant-based ingredients':popular?' from our demo favorites':' for your next coffee break')+'. Let the cafe team know about any allergies.',items:picks.map(i=>i.id),demo:true}};
+ if(!process.env.GEMINI_API_KEY)return Response.json(mock());
+ try {const ai=new GoogleGenAI({apiKey:process.env.GEMINI_API_KEY});const response=await ai.models.generateContent({model:'gemini-2.5-flash',contents:message,config:{systemInstruction:`You are the Qahwa House menu assistant. Reply in ${ar?'Arabic':'English'}. Recommend ONLY items from this JSON menu: ${JSON.stringify(menu)}. Never invent products, prices, availability or allergy safety. Popular means the Popular tag, a demo editorial selection. For unrelated questions politely redirect to the menu. Return a brief reply and up to 3 matching item IDs.`,responseMimeType:'application/json',responseSchema:{type:Type.OBJECT,properties:{reply:{type:Type.STRING},items:{type:Type.ARRAY,items:{type:Type.STRING}}},required:['reply','items']}}});const data=JSON.parse(response.text||'{}');return Response.json({reply:String(data.reply||mock().reply),items:Array.isArray(data.items)?data.items.filter((id:string)=>menu.some(i=>i.id===id)).slice(0,3):[],demo:false});}catch{return Response.json(mock())}
+ }catch{return Response.json({error:'Unable to read request.'},{status:400})}
+}
