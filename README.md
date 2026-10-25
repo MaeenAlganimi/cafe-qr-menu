@@ -1,5 +1,7 @@
 # Qahwa House: AI Menu and QR Table Ordering
 
+**Live demo:** https://cafe-qr-menu-4ugq.onrender.com (free instance; first load can take ~50 s to wake)
+
 Bilingual (EN/AR) cafe menu with QR table ordering and an Ask-the-menu Gemini assistant that recommends dishes.
 
 A demo template by **Maeen Alganimi**. Bilingual English / Arabic (RTL), with AI from Google Gemini (`gemini-2.5-flash`) called server-side only.
