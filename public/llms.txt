@@ -1,1 +1,1 @@
-Qahwa House is a fictional bilingual AI cafe menu and QR ordering demo by Qudra Labs. Orders are stored locally and do not reach a kitchen.
+Qahwa House is a fictional bilingual AI cafe menu and QR ordering demo by Maeen Alganimi. Orders are stored locally and do not reach a kitchen.

@@ -1,4 +1,4 @@
-# Qahwa House · Qudra Labs demo
+# Qahwa House · demo
 
 A fictional English/Arabic cafe menu with RTL, table carts, QR ordering explanation and Gemini menu recommendations.
 
